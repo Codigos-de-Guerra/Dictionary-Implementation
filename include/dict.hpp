@@ -22,13 +22,13 @@ class DAL {
 		static const int DEFAULT_SIZE = 50;
 		size_t m_size;							//!< Current list size.
 		size_t m_capacity;						//!< Maximun list capacity.
-		NodeAL *mpt_Data;						//!< Dynamic storage array.
+		NodeAL *mpt_data;						//!< Dynamic storage array.
 
 		int _search( const Key & k_ ) const;	//!< Auxiliary search method.
 
 	public:
 		DAL ( int _MaxSz = DEFAULT_SIZE );
-		virtual ~DAL() { delete [] mpt_Data; };
+		virtual ~DAL() { delete [] mpt_data; };
 		
 		//! @brief Removes an pair of key-data inside dictionary.
 		bool remove( const Key & k_, Data & d_ );
@@ -56,8 +56,8 @@ class DAL {
 		{
 			os_ << "[ ";
 			for( int i=0; i < List_.m_size; i++ ){
-				os_ << "{id: " << List_.mpt_Data[i].id << ", info: "
-					<< List_.mpt_Data[i].info << "}  ";
+				os_ << "{id: " << List_.mpt_data[i].id << ", info: "
+					<< List_.mpt_data[i].info << "}  ";
 			}
 			os_ << "]";
 
