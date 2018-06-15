@@ -21,5 +21,6 @@ int main() {
 	std::cout << ">>> Inserindo {2014065190, \"John\"}\n";
 	myList.insert( 2014065190, "John" );
 
+	std::cout << myList;
 	return 0;
 }
