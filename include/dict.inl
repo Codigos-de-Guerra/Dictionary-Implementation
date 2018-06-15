@@ -1,4 +1,3 @@
-
 #include "dict.hpp"
 
 /**
@@ -41,8 +40,8 @@ bool DAL< Key, Data, KeyComparator >::remove ( const Key & k_,
 	if( i == -1 ) return false;
 
 	d_ == mpt_data[i].info;
-	mpt_data[i].key == mpt_data[m_size-1].key;
-	mpt_data[i].info == mpt_data[m_size-1].info;
+	mpt_data[i].id = mpt_data[m_size-1].id;
+	mpt_data[i].info = mpt_data[m_size-1].info;
 
 	m_size--;
 	return true;
@@ -74,10 +73,10 @@ template< typename Key, typename Data, typename KeyComparator >
 Key DAL< Key, Data, KeyComparator >::min ( void ) const
 /*{{{*/
 {
-	Key min_ = mpt_data[0].key;
-	for( int i=1; i < m_size; i++ ){
-		if( true == KeyComparator( mpt_data[i].key, min_ ) ){
-			min_ = mpt_data[i].key;
+	Key min_ = mpt_data[0].id;
+	for( int i=1; i < (int) m_size; i++ ){
+		if( true == compare( mpt_data[i].id, min_ ) ){
+			min_ = mpt_data[i].id;
 		}
 	}
 
@@ -89,10 +88,10 @@ template< typename Key, typename Data, typename KeyComparator >
 Key DAL< Key, Data, KeyComparator >::max ( void ) const
 /*{{{*/
 {
-	Key max_ = mpt_data[0].key;
-	for( int i=1; i < m_size; i++ ){
-		if( true == KeyComparator( max_, mpt_data[i].key ) ){
-			max = mpt_data[i].key;
+	Key max_ = mpt_data[0].id;
+	for( int i=1; i < (int) m_size; i++ ){
+		if( true == compare( max_, mpt_data[i].id ) ){
+			max_ = mpt_data[i].id;
 		}
 	}
 
@@ -107,22 +106,24 @@ bool DAL< Key, Data, KeyComparator >::sucessor ( const Key & key1_,
 {
 	Key suc;
 	bool is_a_bigger = false;
-	for( int i=0; i < m_size; i++ ){
-		if( true == KeyComparator( key1_, mpt_data[i].key ) ){
+	for( int i=0; i < (int) m_size; i++ ){
+		if( true == compare( key1_, mpt_data[i].id ) ){
 			if( !is_a_bigger ){
-				suc = mpt_data[i].key;
+				suc = mpt_data[i].id;
 				is_a_bigger = true;
 				//continue;
 			}
-			if( true == KeyComparator( mpt_data[i].key, suc ) ){
-				suc = mpt_data[i].key;
+			if( true == compare( mpt_data[i].id, suc ) ){
+				suc = mpt_data[i].id;
 			}
 		}
 	}
 
-	key2_ = suc;
+	if( is_a_bigger ){
+		key2_ = suc;
+		return true;
+	}
 
-	if( is_a_bigger ) return true;
 	return false;
 }
 /*}}}*/
@@ -134,22 +135,24 @@ bool DAL< Key, Data, KeyComparator >::predecessor ( const Key & key1_,
 {
 	Key pred;
 	bool is_a_smaller = false;
-	for( int i=0; i < m_size; i++ ){
-		if( true == KeyComparator( mpt_data[i].key, key1_ ) ){
+	for( int i=0; i < (int) m_size; i++ ){
+		if( true == compare( mpt_data[i].id, key1_ ) ){
 			if( !is_a_smaller ){
-				pred = mpt_data[i].key;
+				pred = mpt_data[i].id;
 				is_a_smaller = true;
 				//continue;
 			}
-			if( true == KeyComparator( pred, mpt_data[i].key ) ){
-				pred = mpt_data[i].key;
+			if( true == compare( pred, mpt_data[i].id ) ){
+				pred = mpt_data[i].id;
 			}
 		}
 	}
 
-	key2_ = pred;
+	if( is_a_smaller ){
+		key2_ = pred;
+		return true;
+	}
 
-	if( is_a_smaller ) return true;
 	return false;
 }
 /*}}}*/
@@ -175,98 +178,98 @@ void DAL< Key, Data, KeyComparator >::resize ( void )
 // DSAL Implementation
 /*DSAL Implementation{{{*/
 
-template< typename Key, typename Data, typename KeyComparator >
-bool DSAL< Key, Data, KeyComparator >::remove ( const Key & k_,
-												Data & d_ )
-/*{{{*/
-{
-	int i = _search( k_ );
-	if( i == -1 ) return false;
-	d_ == mpt_data[i].info;
+// template< typename Key, typename Data, typename KeyComparator >
+// bool DSAL< Key, Data, KeyComparator >::remove ( const Key & k_,
+// 												Data & d_ )
+// /*{{{*/
+// {
+// 	int i = _search( k_ );
+// 	if( i == -1 ) return false;
+// 	d_ == mpt_data[i].info;
 
-	for( int j=i; j+1 < m_size; j++ ){
-		mpt_data[j].key = mpt_data[j+1].key;
-		mpt_data[j].info = mpt_data[j+1].info;
-	}
+// 	for( int j=i; j+1 < m_size; j++ ){
+// 		mpt_data[j].id = mpt_data[j+1].id;
+// 		mpt_data[j].info = mpt_data[j+1].info;
+// 	}
 
-	m_size--;
-	return true;
-}
-/*}}}*/
+// 	m_size--;
+// 	return true;
+// }
+// /*}}}*/
 
-template< typename Key, typename Data, typename KeyComparator >
-bool DSAL< Key, Data, KeyComparator >::insert ( const Key & new_k_,
-												const Data & new_d_ )
-/*{{{*/
-{
-	int i = _search( new_k_ );
+// template< typename Key, typename Data, typename KeyComparator >
+// bool DSAL< Key, Data, KeyComparator >::insert ( const Key & new_k_,
+// 												const Data & new_d_ )
+// /*{{{*/
+// {
+// 	int i = _search( new_k_ );
 
-	// Overwrites information if key already exists. Returns False.
-	if( i >= 0 ){
-		mpt_data[i].info = new_d_;
-		return false;
-	}
-	if( ++m_size > m_capacity ) resize();
+// 	// Overwrites information if key already exists. Returns False.
+// 	if( i >= 0 ){
+// 		mpt_data[i].info = new_d_;
+// 		return false;
+// 	}
+// 	if( ++m_size > m_capacity ) resize();
 
-	i=0;
+// 	i=0;
 
-	// Finding where the new key should be inserted.
-	while( true == KeyComparator( mpt_data[i].key, new_k_ ) ){
-		i++;
-	}
+// 	// Finding where the new key should be inserted.
+// 	while( true == compare( mpt_data[i].id, new_k_ ) ){
+// 		i++;
+// 	}
 
-	for( int j=m_size-1; j > i; j-- ){
-		mpt_data[j].key = mpt_data[j-1].key;
-		mpt_data[j].info = mpt_data[j-1].info;
-	}
+// 	for( int j=m_size-1; j > i; j-- ){
+// 		mpt_data[j].id = mpt_data[j-1].id;
+// 		mpt_data[j].info = mpt_data[j-1].info;
+// 	}
 
-	mpt_data[i].key = new_k_;
-	mpt_data[i].info = new_d_;
+// 	mpt_data[i].id = new_k_;
+// 	mpt_data[i].info = new_d_;
 
-	return true;
-}
-/*}}}*/
+// 	return true;
+// }
+// /*}}}*/
 
-template< typename Key, typename Data, typename KeyComparator >
-Key DSAL< Key, Data, KeyComparator >::min ( void ) const
-/*{{{*/
-{
-	return mpt_data[0].key;
-}
-/*}}}*/
+// template< typename Key, typename Data, typename KeyComparator >
+// Key DSAL< Key, Data, KeyComparator >::min ( void ) const
+// /*{{{*/
+// {
+// 	return mpt_data[0].id;
+// }
+// /*}}}*/
 
-template< typename Key, typename Data, typename KeyComparator >
-Key DSAL< Key, Data, KeyComparator >::max ( void ) const
-/*{{{*/
-{
-	return mpt_data[m_size-1].key;
-}
-/*}}}*/
+// template< typename Key, typename Data, typename KeyComparator >
+// Key DSAL< Key, Data, KeyComparator >::max ( void ) const
+// /*{{{*/
+// {
+// 	return mpt_data[m_size-1].id;
+// }
+// /*}}}*/
 
-template< typename Key, typename Data, typename KeyComparator >
-bool DSAL< Key, Data, KeyComparator >::sucessor ( const Key & key1_,
-												  Key & key2_ ) const
-/*{{{*/
-{
-	int i = _search( key1_ );
-	if( i+1 > m_size-1 ) return false;
-	key2_ = mpt_data[i+1].key;
+// template< typename Key, typename Data, typename KeyComparator >
+// bool DSAL< Key, Data, KeyComparator >::sucessor ( const Key & key1_,
+// 												  Key & key2_ ) const
+// /*{{{*/
+// {
+// 	int i = _search( key1_ );
+// 	if( i+1 > m_size-1 ) return false;
+// 	key2_ = mpt_data[i+1].id;
 
-	return true;
-}
-/*}}}*/
+// 	return true;
+// }
+// /*}}}*/
 
-template< typename Key, typename Data, typename KeyComparator >
-bool DSAL< Key, Data, KeyComparator >::predecessor ( const Key & key1_,
-													 Key & key2_ ) const
-/*{{{*/
-{
-	int i = _search( key1_ );
-	if( i-1 < 0 ) return false;
-	key2_ = mpt_data[i-1].key;
+// template< typename Key, typename Data, typename KeyComparator >
+// bool DSAL< Key, Data, KeyComparator >::predecessor ( const Key & key1_,
+// 													 Key & key2_ ) const
+// /*{{{*/
+// {
+// 	int i = _search( key1_ );
+// 	if( i-1 < 0 ) return false;
+// 	key2_ = mpt_data[i-1].id;
 	
-	return true;
-}
-/*}}}*/
+// 	return true;
+// }
+// /*}}}*/
 
-/*}}}*/
+// /*}}}*/
