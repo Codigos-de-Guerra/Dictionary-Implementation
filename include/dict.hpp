@@ -21,7 +21,7 @@ class DAL {
 			Data info;		//!< Info about dictionary elements.
 		};
 
-		static const int DEFAULT_SIZE = 10;
+		static const int DEFAULT_SIZE = 50;
 		size_t m_size;							//!< Current list size.
 		size_t m_capacity;						//!< Maximun list capacity.
 		NodeAL *mpt_data;						//!< Dynamic storage array.
@@ -30,6 +30,7 @@ class DAL {
 
 		int _search( const Key & k_ ) const	//!< Auxiliary search method.
 		{
+			// Since it isn't sorted, we use just a simple linear search.
 			int i=0;
 			while( i < (int) m_size ){
 				if( mpt_data[i].id == k_ ) return i;
@@ -47,80 +48,84 @@ class DAL {
 		//! @brief Removes an pair of key-data inside dictionary.
 		bool remove( const Key & k_, Data & d_ );
 	
-		//! @brief Inserts......
+		//! @brief Inserts a new pair of key-data inside dictionary.
 		bool insert( const Key & new_k_, const Data & new_d_ );
 
-		//! @brief Minimun.......
+		//! @brief Lowest key existing on dictionary.
 		Key min( void ) const;
 
-		//! @brief Maximun.......
+		//! @brief Highest key existing on dictionary.
 		Key max( void ) const;
 
-		//! @brief 
-		bool sucessor( const Key & key_1_, Key & key_2_ ) const;
+		//! @brief Saves the smallest key bigger than 'key1_'.
+		//! @return True if there is a bigger element. False otherwise.
+		bool sucessor( const Key & key1_, Key & key2_ ) const;
 
-		//! @brief
-		bool predecessor( const Key & key_1_, Key & key_2_ ) const;
+		//! @brief Saves the biggest key smaller than 'key2_'.
+		//!	@return True if there is a smaller element. False otherwise.
+		bool predecessor( const Key & key1_, Key & key2_ ) const;
 
-		//! @brief Reallocates necessary memory space for dict.
+		//! @brief Reallocates necessary memory space for dictionary.
 		void resize( void );
 
+		//! @brief Friend function for debugging. Prints Dictionary.
 		inline friend std::ostream &operator<< (std::ostream& os_,
 												const DAL& List_ )
 		{
-			os_ << "[ ";
+			os_ << "[\n";
 			for( int i=0; i < (int)List_.m_size; i++ ){
-				os_ << "{id: " << List_.mpt_data[i].id << ", info: "
-					<< List_.mpt_data[i].info << "}  ";
+				os_ << "      {id: " << List_.mpt_data[i].id << ", info: "
+					<< List_.mpt_data[i].info << "}  \n";
 			}
-			os_ << "]";
+			os_ << "]\n";
 
 			return os_;
 		}
 };
 
-// template< typename Key, typename Data, typename KeyComparator >
-// class DSAL : public DAL< Key, Data, KeyComparator >	// Heritage.
-// // DSAL = Dictionary with Sorted Array List.
-// {
-// 	public:
-// 		DSAL( int _MaxSz ) : DAL< Key, Data, KeyComparator >( _MaxSz )
-// 		{ /* empty */ };
-// 		DSAL( void ) : DAL< Key, Data, KeyComparator >( void )
-// 		{ /* empty */ };
-// 		virtual ~DSAL() { /* empty */ };
+template< typename Key, typename Data, typename KeyComparator >
+class DSAL : public DAL< Key, Data, KeyComparator >	// Heritage.
+// DSAL = Dictionary with Sorted Array List.
+{
+	public:
+		DSAL( int _MaxSz ) : DAL< Key, Data, KeyComparator >( _MaxSz )
+		{ /* empty */ };
+	//	DSAL( void ) : DAL< Key, Data, KeyComparator >( void )
+	//	{ /* empty */ };
+		virtual ~DSAL() { /* empty */ };
 
-// 		// Methods to overwrite.
-// 		bool remove( const Key & k_, Data & d_ );
-// 		bool insert( const Key & new_k_, const Data & new_d_ );
-// 		Key min() const;
-// 		Key max() const;
-// 		bool sucessor( const Key & key_1_, Key & key_2_ ) const;
-// 		bool predecessor( const Key & key_1_, Key & key_2_ ) const;
+		// Methods to overwrite.
+		bool remove( const Key & k_, Data & d_ );
+		bool insert( const Key & new_k_, const Data & new_d_ );
+		Key min() const;
+		Key max() const;
+		bool sucessor( const Key & key1_, Key & key2_ ) const;
+		bool predecessor( const Key & key1_, Key & key2_ ) const;
 
-// 	private:
-// 		int _search( const Key & k_ ) const	// Auxiliary search method.
-// 		{
-// 			int first = 0;
-// 			int last = m_size - 1;
-// 			int pos = m_size/2;
-// 			while( first <= last ){
-// 				if( true == KeyComparator( mpt_data[pos].id, k_ ) ){
-// 					first = pos+1;
-// 				}
-// 				else if( true == KeyComparator( k_, mpt_data[pos].id ){
-// 					last = pos-1;
-// 				}
-// 				else {
-// 					return pos;
-// 				}
+	private:
+		int _search( const Key & k_ ) const	// Auxiliary search method.
+		{
+			// Since it is sorted, we can use a binary search.
+			int first = 0;
+			int last = this->m_size - 1;
+			int pos = this->m_size/2;
+			while( first <= last ){
+				if( true == this->compare( this->mpt_data[pos].id, k_ ) ){
+					first = pos+1;
+				}
+				else if( true == this->compare( k_, this->mpt_data[pos].id ) ){
+					last = pos-1;
+				}
+				else {
+					return pos;
+				}
 
-// 				pos = first + (last-first+1)/2;
-// 			}
+				pos = first + (last-first+1)/2;
+			}
 
-// 			return -1;
-// 		}
-// };
+			return -1;
+		}
+};
 
 // Source Code
 #include "dict.inl"	// All the class function implementations.
