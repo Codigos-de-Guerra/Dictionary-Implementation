@@ -31,6 +31,17 @@ DAL< Key, Data, KeyComparator >::DAL ( void )
 /*}}}*/
 
 template< typename Key, typename Data, typename KeyComparator >
+DAL< Key, Data, KeyComparator >::DAL ( DAL & rhs )
+/*{{{*/
+{
+	mpt_data = rhs.mpt_data;
+	m_size = rhs.m_size;
+	m_capacity = rhs.m_capacity;
+}
+/*}}}*/
+
+
+template< typename Key, typename Data, typename KeyComparator >
 bool DAL< Key, Data, KeyComparator >::remove ( const Key & k_,
 											   Data & d_ )
 /*{{{*/
@@ -38,7 +49,8 @@ bool DAL< Key, Data, KeyComparator >::remove ( const Key & k_,
 	int i = _search( k_ );
 	if( i == -1 ) return false;
 
-	d_ == mpt_data[i].info;
+	d_ = mpt_data[i].info;
+
 	mpt_data[i].id = mpt_data[m_size-1].id;
 	mpt_data[i].info = mpt_data[m_size-1].info;
 
@@ -72,6 +84,7 @@ template< typename Key, typename Data, typename KeyComparator >
 Key DAL< Key, Data, KeyComparator >::min ( void ) const
 /*{{{*/
 {
+	if( m_size == 0 ) return Key(0);
 	Key min_ = mpt_data[0].id;
 	for( int i=1; i < (int) m_size; i++ ){
 		if( true == compare( mpt_data[i].id, min_ ) ){
@@ -87,6 +100,7 @@ template< typename Key, typename Data, typename KeyComparator >
 Key DAL< Key, Data, KeyComparator >::max ( void ) const
 /*{{{*/
 {
+	if( m_size == 0 ) return Key(0);
 	Key max_ = mpt_data[0].id;
 	for( int i=1; i < (int) m_size; i++ ){
 		if( true == compare( max_, mpt_data[i].id ) ){
@@ -170,6 +184,22 @@ void DAL< Key, Data, KeyComparator >::resize ( void )
 	
 	m_capacity = (3*m_capacity)/2;
 }
+
+template< typename Key, typename Data, typename KeyComparator >
+bool DAL< Key, Data, KeyComparator >::operator== ( const DAL & List_ )
+/*{{{*/
+{
+	if( m_size != List_.m_size ) return false;
+	if( m_capacity != List_.m_capacity ) return false;
+
+	for( int i=0; i < m_size; i++ )
+	{
+		if( mpt_data[i].id != List_.mpt_data[i].id or
+			mpt_data[i].info != List_.mpt_data[i].info ) return false;
+	}
+
+	return true;
+}
 /*}}}*/
 
 /*}}}*/
@@ -209,7 +239,6 @@ bool DSAL< Key, Data, KeyComparator >::insert ( const Key & new_k_,
 		return false;
 	}
 
-	std::cout << this->m_size;
 	if( ++this->m_size > this->m_capacity ) this->resize();
 /*	if( m_size = 0 ){
 		this->mpt_data[0].id = new_k_;
@@ -218,7 +247,6 @@ bool DSAL< Key, Data, KeyComparator >::insert ( const Key & new_k_,
 		return true;
 	}
 */
-	std::cout << this->m_size;
 
 	i=0;
 
@@ -281,4 +309,19 @@ bool DSAL< Key, Data, KeyComparator >::predecessor ( const Key & key1_,
 }
 /*}}}*/
 
+template< typename Key, typename Data, typename KeyComparator >
+bool DSAL< Key, Data, KeyComparator >::operator== ( const DSAL & List_ )
+/*{{{*/
+{
+	if( this->m_size != List_.m_size ) return false;
+	if( this->m_capacity != List_.m_capacity ) return false;
+
+	for( int i=0; i < this->m_size; i++ )
+	{
+		if( this->mpt_data[i].id != List_.mpt_data[i].id or
+			this->mpt_data[i].info != List_.mpt_data[i].info ) return false;
+	}
+
+	return true;
+}
 /*}}}*/

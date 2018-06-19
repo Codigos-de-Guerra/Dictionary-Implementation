@@ -2,11 +2,12 @@
 
 ## Introduction
 
-This programming project implements the idea of dictionary data structure. Through Hashing, we will associate each account info to a created key. Since it is possibly to have the same account number for different agencies, we can't work with a key that receives only these 2 informations. For pratical use, we are considering a key to be a group of the *client's name, bank code, agency number* and *bank accounts number* data.
+This programming project implements the idea of dictionary data structure. Different from most data structures, dictionary uses a associative container, which means that it retrieves information based on data(or keys). Data Structures such as vector, for exampple, uses sequence container, retrieval based on position.
+More specifically, we will be implementing a Dictionary with Array List(DAL) and a Dictionary with Sorted Array List(DSAL). These two different implementations, differs from each other when about Algorithm Complexity, depending on operations.
 
 ## How to compile
 
-First of all, obviously this repository is needed to work as desired, so we must to download this repo. As we know that ```git``` is a tremendous tool for any programmer, then we must have git installed.
+First of all, obviously this repository is needed to work as desired, so we must to download this repo. As we know that ```git``` is a tremendous tool for any programmer, then consider that git is already installed.
 
 It is also expected for user to have installed [doxygen](https://en.wikipedia.org/wiki/Doxygen ) program. This will automatically generate documentation for code. Not a necessary package to compile and run program, but it is a tool to guide user through code functions. To install `doxygen` on UBUNTU, for example:
 

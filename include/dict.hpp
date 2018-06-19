@@ -32,17 +32,20 @@ class DAL {
 		{
 			// Since it isn't sorted, we use just a simple linear search.
 			int i=0;
+			int not_found = -1;
 			while( i < (int) m_size ){
 				if( mpt_data[i].id == k_ ) return i;
 				i++;
 			}
 
-			return -1;
+			return not_found;
 		}
 
 	public:
 		DAL ( int _MaxSz );
 		DAL ( void );
+		DAL ( DAL &rhs );
+
 		virtual ~DAL() { delete [] mpt_data; };
 		
 		//! @brief Removes an pair of key-data inside dictionary.
@@ -68,8 +71,11 @@ class DAL {
 		//! @brief Reallocates necessary memory space for dictionary.
 		void resize( void );
 
+		//! @return True if Lists are the same. False otherwise.
+		bool operator== ( const DAL & List_ );
+
 		//! @brief Friend function for debugging. Prints Dictionary.
-		inline friend std::ostream &operator<< (std::ostream& os_,
+		inline friend std::ostream &operator<< ( std::ostream& os_,
 												const DAL& List_ )
 		{
 			os_ << "[\n";
@@ -90,8 +96,24 @@ class DSAL : public DAL< Key, Data, KeyComparator >	// Heritage.
 	public:
 		DSAL( int _MaxSz ) : DAL< Key, Data, KeyComparator >( _MaxSz )
 		{ /* empty */ };
-	//	DSAL( void ) : DAL< Key, Data, KeyComparator >( void )
-	//	{ /* empty */ };
+
+		DSAL( void ) : DAL< Key, Data, KeyComparator >( )
+		{ /* empty */ };
+
+		DSAL( DSAL & rhs )
+		{
+		this->mpt_data = new typename 
+							 DAL<Key,
+								 Data,
+								 KeyComparator>::NodeAL[rhs.m_capacity];
+		std::copy( rhs.mpt_data,
+				   rhs.mpt_data + this->m_size,
+				   this->mpt_data );
+
+		this->m_size = rhs.m_size;
+		this->m_capacity = rhs.m_capacity;
+		}
+
 		virtual ~DSAL() { /* empty */ };
 
 		// Methods to overwrite.
@@ -101,6 +123,7 @@ class DSAL : public DAL< Key, Data, KeyComparator >	// Heritage.
 		Key max() const;
 		bool sucessor( const Key & key1_, Key & key2_ ) const;
 		bool predecessor( const Key & key1_, Key & key2_ ) const;
+		bool operator== ( const DSAL & List_ );
 
 	private:
 		int _search( const Key & k_ ) const	// Auxiliary search method.
