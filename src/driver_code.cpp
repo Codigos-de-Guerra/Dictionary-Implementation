@@ -22,7 +22,7 @@ int keys[] =
 
 int main() {
 /*--------------------------- Testing DAL ------------------------------*/
-	std::cout << "\e[34;4m>>> START TESTING DAL:----\e[0m\n";
+	std::cout << "\n\e[34;4m>>> START TESTING DAL:----\e[0m\n";
 	DAL< int, std::string, MyKeyComparator > myDAL;
 
 	std::cout << ">>> Inserindo {2015003129, \"Jack\"}\n";
@@ -70,8 +70,8 @@ int main() {
 	std::cout << "\n\e[35;1mMy DAL after removal:\n" << myDAL << "\e[0m";
 
 
-	DAL< int, std::string, MyKeyComparator > myCopiedDAL( myDAL );
-	assert( myCopiedDAL == myDAL );
+//	DAL< int, std::string, MyKeyComparator > myCopiedDAL( myDAL );
+//	assert( myCopiedDAL == myDAL );
 
 /*--------------------------- Testing DSAL ------------------------------*/
 	std::cout << "\n\n\e[34;4m>>> START TESTING DSAL:----\e[0m\n";
@@ -123,5 +123,21 @@ int main() {
 	DSAL< int, std::string, MyKeyComparator > myCopiedDSAL( myDSAL );
 	assert( myCopiedDSAL == myDSAL );
 
+	std::cout << "\e[34;4m>>> Inserting lots of elements\e[0m\n";
+/*
+	TODO.....
+
+	for( int i=0; i < 50; i++ ){
+		// Converting integer to char.
+		std::string Nome = "NAME" + i;
+		myDSAL.insert( keys[i], Nome );
+	}
+*/
+	assert( myDSAL.size() == 5 );
+//	assert( myDSAL.size() == 55 );
+
+
+
+	std::cout << "\n\e[36;4m>>> SUCESS ACHIEVED\e[0m\n";
 	return 0;
 }

@@ -34,12 +34,13 @@ template< typename Key, typename Data, typename KeyComparator >
 DAL< Key, Data, KeyComparator >::DAL ( DAL & rhs )
 /*{{{*/
 {
-	mpt_data = rhs.mpt_data;
+	mpt_data = new NodeAL[rhs.m_capacity];
+	std::copy( rhs.mpt_data, rhs.mpt_data + rhs.m_size, mpt_data );
+
 	m_size = rhs.m_size;
 	m_capacity = rhs.m_capacity;
 }
 /*}}}*/
-
 
 template< typename Key, typename Data, typename KeyComparator >
 bool DAL< Key, Data, KeyComparator >::remove ( const Key & k_,
@@ -184,6 +185,7 @@ void DAL< Key, Data, KeyComparator >::resize ( void )
 	
 	m_capacity = (3*m_capacity)/2;
 }
+/*}}}*/
 
 template< typename Key, typename Data, typename KeyComparator >
 bool DAL< Key, Data, KeyComparator >::operator== ( const DAL & List_ )
@@ -202,10 +204,37 @@ bool DAL< Key, Data, KeyComparator >::operator== ( const DAL & List_ )
 }
 /*}}}*/
 
+template< typename Key, typename Data, typename KeyComparator >
+size_t DAL< Key, Data, KeyComparator >::size ( void )
+/*{{{*/
+{
+	return m_size;
+}
+/*}}}*/
+
+
 /*}}}*/
 
 // DSAL Implementation
 /*DSAL Implementation{{{*/
+
+template< typename Key, typename Data, typename KeyComparator >
+DSAL< Key, Data, KeyComparator >::DSAL ( DSAL & rhs )
+/*{{{*/
+{
+	this->mpt_data = new typename
+					 DAL< Key,
+						  Data,
+						  KeyComparator >::NodeAL[rhs.m_capacity];
+
+	std::copy( rhs.mpt_data,
+			   rhs.mpt_data + rhs.m_size,
+			   this->mpt_data );
+
+	this->m_size = rhs.m_size;
+	this->m_capacity = rhs.m_capacity;
+}
+/*}}}*/
 
 template< typename Key, typename Data, typename KeyComparator >
 bool DSAL< Key, Data, KeyComparator >::remove ( const Key & k_,
@@ -315,7 +344,7 @@ bool DSAL< Key, Data, KeyComparator >::operator== ( const DSAL & List_ )
 {
 	if( this->m_size != List_.m_size ) return false;
 	if( this->m_capacity != List_.m_capacity ) return false;
-
+	
 	for( int i=0; i < this->m_size; i++ )
 	{
 		if( this->mpt_data[i].id != List_.mpt_data[i].id or
@@ -324,4 +353,14 @@ bool DSAL< Key, Data, KeyComparator >::operator== ( const DSAL & List_ )
 
 	return true;
 }
+/*}}}*/
+
+template< typename Key, typename Data, typename KeyComparator >
+size_t DSAL< Key, Data, KeyComparator >::size ( void )
+/*{{{*/
+{
+	return this->m_size;
+}
+/*}}}*/
+
 /*}}}*/

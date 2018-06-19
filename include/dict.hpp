@@ -42,8 +42,13 @@ class DAL {
 		}
 
 	public:
+		//! @brief Constructor through size passed.
 		DAL ( int _MaxSz );
+
+		//! @brief Constructor with default size.
 		DAL ( void );
+
+		//! @brief Copy Constructor.
 		DAL ( DAL &rhs );
 
 		virtual ~DAL() { delete [] mpt_data; };
@@ -74,6 +79,9 @@ class DAL {
 		//! @return True if Lists are the same. False otherwise.
 		bool operator== ( const DAL & List_ );
 
+		//! @brief Returns number of current elements on Dictionary.
+		size_t size( void );
+
 		//! @brief Friend function for debugging. Prints Dictionary.
 		inline friend std::ostream &operator<< ( std::ostream& os_,
 												const DAL& List_ )
@@ -94,25 +102,16 @@ class DSAL : public DAL< Key, Data, KeyComparator >	// Heritage.
 // DSAL = Dictionary with Sorted Array List.
 {
 	public:
+		//! @brief Constructor through passed size. Same as DAL.
 		DSAL( int _MaxSz ) : DAL< Key, Data, KeyComparator >( _MaxSz )
 		{ /* empty */ };
 
+		//! @brief Constructor with default size. Same as DAL.
 		DSAL( void ) : DAL< Key, Data, KeyComparator >( )
 		{ /* empty */ };
 
-		DSAL( DSAL & rhs )
-		{
-		this->mpt_data = new typename 
-							 DAL<Key,
-								 Data,
-								 KeyComparator>::NodeAL[rhs.m_capacity];
-		std::copy( rhs.mpt_data,
-				   rhs.mpt_data + this->m_size,
-				   this->mpt_data );
-
-		this->m_size = rhs.m_size;
-		this->m_capacity = rhs.m_capacity;
-		}
+		//! @brief Copy Constructor.
+		DSAL( DSAL & rhs );	
 
 		virtual ~DSAL() { /* empty */ };
 
@@ -124,6 +123,7 @@ class DSAL : public DAL< Key, Data, KeyComparator >	// Heritage.
 		bool sucessor( const Key & key1_, Key & key2_ ) const;
 		bool predecessor( const Key & key1_, Key & key2_ ) const;
 		bool operator== ( const DSAL & List_ );
+		size_t size ( void );
 
 	private:
 		int _search( const Key & k_ ) const	// Auxiliary search method.
