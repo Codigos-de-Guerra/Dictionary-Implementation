@@ -37,6 +37,7 @@ DAL< Key, Data, KeyComparator >::DAL ( DAL & rhs )
 	mpt_data = new NodeAL[rhs.m_capacity];
 	std::copy( rhs.mpt_data, rhs.mpt_data + rhs.m_size, mpt_data );
 
+//	mpt_data = rhs.mpt_data;
 	m_size = rhs.m_size;
 	m_capacity = rhs.m_capacity;
 }
@@ -175,15 +176,13 @@ template< typename Key, typename Data, typename KeyComparator >
 void DAL< Key, Data, KeyComparator >::resize ( void )
 /*{{{*/
 {
+	m_capacity += m_capacity/2;
+
 	NodeAL *new_data = new NodeAL[m_capacity];
-	std::copy( mpt_data, mpt_data + m_size, new_data );
+	std::copy( mpt_data, mpt_data + m_size-1, new_data );
 	delete [] mpt_data;
 
-	mpt_data = new NodeAL[(3*m_capacity)/2];
-	std::copy( new_data, new_data + m_size, mpt_data );
-	delete [] new_data;
-	
-	m_capacity = (3*m_capacity)/2;
+	mpt_data = new_data;
 }
 /*}}}*/
 
@@ -269,13 +268,6 @@ bool DSAL< Key, Data, KeyComparator >::insert ( const Key & new_k_,
 	}
 
 	if( ++this->m_size > this->m_capacity ) this->resize();
-/*	if( m_size = 0 ){
-		this->mpt_data[0].id = new_k_;
-		this->mpt_data[0].info = new_d_;
-		this->m_size++;
-		return true;
-	}
-*/
 
 	i=0;
 

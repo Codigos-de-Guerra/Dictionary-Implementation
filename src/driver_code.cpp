@@ -13,17 +13,12 @@ class MyKeyComparator {
 };
 
 // Array containig differents keys values to insert.
-int keys[] =
-{
-	2015003129,
-	2014065190
-
-};
+int *keys = new int[99];
 
 int main() {
 /*--------------------------- Testing DAL ------------------------------*/
 	std::cout << "\n\e[34;4m>>> START TESTING DAL:----\e[0m\n";
-	DAL< int, std::string, MyKeyComparator > myDAL;
+	DAL< int, std::string, MyKeyComparator > myDAL( 10 );
 
 	std::cout << ">>> Inserindo {2015003129, \"Jack\"}\n";
 	myDAL.insert( 2015003129, "Jack" );
@@ -70,8 +65,10 @@ int main() {
 	std::cout << "\n\e[35;1mMy DAL after removal:\n" << myDAL << "\e[0m";
 
 
-//	DAL< int, std::string, MyKeyComparator > myCopiedDAL( myDAL );
-//	assert( myCopiedDAL == myDAL );
+	DAL< int, std::string, MyKeyComparator > myCopiedDAL( myDAL );
+	assert( myCopiedDAL == myDAL );
+
+
 
 /*--------------------------- Testing DSAL ------------------------------*/
 	std::cout << "\n\n\e[34;4m>>> START TESTING DSAL:----\e[0m\n";
@@ -124,20 +121,24 @@ int main() {
 	assert( myCopiedDSAL == myDSAL );
 
 	std::cout << "\e[34;4m>>> Inserting lots of elements\e[0m\n";
-/*
-	TODO.....
+	for( int i=0; i < 99; i++ ){
+		keys[i] = i+1;
+	}
 
-	for( int i=0; i < 50; i++ ){
+	std::string Nome;
+	for( int i=0; i < 99; i++ ){
 		// Converting integer to char.
-		std::string Nome = "NAME" + i;
+		Nome = "NAME_" + std::to_string( (i+1)*10 );
 		myDSAL.insert( keys[i], Nome );
 	}
-*/
-	assert( myDSAL.size() == 5 );
-//	assert( myDSAL.size() == 55 );
 
+	assert( myDSAL.size() == 104 );
+	std::cout << ">Resizing working smoothly\n\n";
+	std::cout << "\e[35;1mNew DSAL:\n" << myDSAL << "\n\e[0m";
 
 
 	std::cout << "\n\e[36;4m>>> SUCESS ACHIEVED\e[0m\n";
+	delete [] keys;
+
 	return 0;
 }

@@ -21,7 +21,7 @@ class DAL {
 			Data info;		//!< Info about dictionary elements.
 		};
 
-		static const int DEFAULT_SIZE = 50;
+		static const int DEFAULT_SIZE = 30;
 		size_t m_size;							//!< Current list size.
 		size_t m_capacity;						//!< Maximun list capacity.
 		NodeAL *mpt_data;						//!< Dynamic storage array.
