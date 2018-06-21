@@ -20,14 +20,14 @@ DAL< Key, Data, KeyComparator >::DAL ( int _MaxSz )
 }
 /*}}}*/
 
-template< typename Key, typename Data, typename KeyComparator >
-DAL< Key, Data, KeyComparator >::DAL ( void )
+//template< typename Key, typename Data, typename KeyComparator >
+//DAL< Key, Data, KeyComparator >::DAL ( void )
 /*{{{*/
-{
-	mpt_data = new NodeAL[DEFAULT_SIZE];
-	m_size = 0;
-	m_capacity = DEFAULT_SIZE;
-}
+//{
+//	mpt_data = new NodeAL[DEFAULT_SIZE];
+//	m_size = 0;
+//	m_capacity = DEFAULT_SIZE;
+//}
 /*}}}*/
 
 template< typename Key, typename Data, typename KeyComparator >
@@ -62,6 +62,19 @@ bool DAL< Key, Data, KeyComparator >::remove ( const Key & k_,
 /*}}}*/
 
 template< typename Key, typename Data, typename KeyComparator >
+bool DAL< Key, Data, KeyComparator >::search ( const Key & k_,
+											   Data & d_ )
+/*{{{*/
+{
+	int i = _search( k_ );
+	if( i == -1 ) return false;
+
+	d_ = mpt_data[i].info;
+	return true;
+}
+/*}}}*/
+
+template< typename Key, typename Data, typename KeyComparator >
 bool DAL< Key, Data, KeyComparator >::insert ( const Key & new_k_,
 											   const Data & new_d_ )
 /*{{{*/
@@ -86,7 +99,7 @@ template< typename Key, typename Data, typename KeyComparator >
 Key DAL< Key, Data, KeyComparator >::min ( void ) const
 /*{{{*/
 {
-	if( m_size == 0 ) return Key(0);
+	if( m_size == 0 ) throw std::out_of_range("Empty Dictionary has no min.");
 	Key min_ = mpt_data[0].id;
 	for( int i=1; i < (int) m_size; i++ ){
 		if( true == compare( mpt_data[i].id, min_ ) ){
@@ -102,7 +115,7 @@ template< typename Key, typename Data, typename KeyComparator >
 Key DAL< Key, Data, KeyComparator >::max ( void ) const
 /*{{{*/
 {
-	if( m_size == 0 ) return Key(0);
+	if( m_size == 0) throw std::out_of_range("Empty Dictionary has no max.");
 	Key max_ = mpt_data[0].id;
 	for( int i=1; i < (int) m_size; i++ ){
 		if( true == compare( max_, mpt_data[i].id ) ){
@@ -115,7 +128,7 @@ Key DAL< Key, Data, KeyComparator >::max ( void ) const
 /*}}}*/
 
 template< typename Key, typename Data, typename KeyComparator >
-bool DAL< Key, Data, KeyComparator >::sucessor ( const Key & key1_,
+bool DAL< Key, Data, KeyComparator >::successor ( const Key & key1_,
 												 Key & key2_ ) const
 /*{{{*/
 {
@@ -211,6 +224,22 @@ size_t DAL< Key, Data, KeyComparator >::size ( void )
 }
 /*}}}*/
 
+template< typename Key, typename Data, typename KeyComparator >
+size_t DAL< Key, Data, KeyComparator >::capacity ( void )
+/*{{{*/
+{
+	return m_capacity;
+}
+/*}}}*/
+
+template< typename Key, typename Data, typename KeyComparator >
+bool DAL< Key, Data, KeyComparator >::empty ( void )
+/*{{{*/
+{
+	return m_size == 0;
+}
+/*}}}*/
+
 
 /*}}}*/
 
@@ -255,6 +284,19 @@ bool DSAL< Key, Data, KeyComparator >::remove ( const Key & k_,
 /*}}}*/
 
 template< typename Key, typename Data, typename KeyComparator >
+bool DSAL< Key, Data, KeyComparator >::search ( const Key & k_,
+												Data & d_ )
+/*{{{*/
+{
+	int i = _search( k_ );
+	if( i == -1 ) return false;
+
+	d_ = this->mpt_data[i].info;
+	return true;
+}
+/*}}}*/
+
+template< typename Key, typename Data, typename KeyComparator >
 bool DSAL< Key, Data, KeyComparator >::insert ( const Key & new_k_,
 												const Data & new_d_ )
 /*{{{*/
@@ -292,6 +334,7 @@ template< typename Key, typename Data, typename KeyComparator >
 Key DSAL< Key, Data, KeyComparator >::min ( void ) const
 /*{{{*/
 {
+	if( this->m_size == 0) throw std::out_of_range("Empty Dictionary has no min.");
 	return this->mpt_data[0].id;
 }
 /*}}}*/
@@ -300,12 +343,13 @@ template< typename Key, typename Data, typename KeyComparator >
 Key DSAL< Key, Data, KeyComparator >::max ( void ) const
 /*{{{*/
 {
+	if( this->m_size == 0 ) throw std::out_of_range("Empty Dictionary has no max.");
 	return this->mpt_data[this->m_size-1].id;
 }
 /*}}}*/
 
 template< typename Key, typename Data, typename KeyComparator >
-bool DSAL< Key, Data, KeyComparator >::sucessor ( const Key & key1_,
+bool DSAL< Key, Data, KeyComparator >::successor ( const Key & key1_,
 												  Key & key2_ ) const
 /*{{{*/
 {

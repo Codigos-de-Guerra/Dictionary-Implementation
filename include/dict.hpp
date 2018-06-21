@@ -10,8 +10,11 @@
 
 #include <iostream>		// cin, cout
 #include <algorithm>	// copy
+#include <functional>
 
-template< typename Key, typename Data, typename KeyComparator >
+template< typename Key,
+		  typename Data,
+		  typename KeyComparator = std::less<int> >
 class DAL {
 // DAL = Dictionary with Array List
 
@@ -21,7 +24,7 @@ class DAL {
 			Data info;		//!< Info about dictionary elements.
 		};
 
-		static const int DEFAULT_SIZE = 30;
+		static const int DEFAULT_SIZE = 50;
 		size_t m_size;							//!< Current list size.
 		size_t m_capacity;						//!< Maximun list capacity.
 		NodeAL *mpt_data;						//!< Dynamic storage array.
@@ -43,10 +46,10 @@ class DAL {
 
 	public:
 		//! @brief Constructor through size passed.
-		DAL ( int _MaxSz );
+		DAL ( int _MaxSz = DEFAULT_SIZE);
 
 		//! @brief Constructor with default size.
-		DAL ( void );
+//		DAL ( void );
 
 		//! @brief Copy Constructor.
 		DAL ( DAL &rhs );
@@ -56,6 +59,8 @@ class DAL {
 		//! @brief Removes an pair of key-data inside dictionary.
 		bool remove( const Key & k_, Data & d_ );
 	
+		bool search( const Key & k_, Data & d_ );
+
 		//! @brief Inserts a new pair of key-data inside dictionary.
 		bool insert( const Key & new_k_, const Data & new_d_ );
 
@@ -67,7 +72,7 @@ class DAL {
 
 		//! @brief Saves the smallest key bigger than 'key1_'.
 		//! @return True if there is a bigger element. False otherwise.
-		bool sucessor( const Key & key1_, Key & key2_ ) const;
+		bool successor( const Key & key1_, Key & key2_ ) const;
 
 		//! @brief Saves the biggest key smaller than 'key2_'.
 		//!	@return True if there is a smaller element. False otherwise.
@@ -81,6 +86,10 @@ class DAL {
 
 		//! @brief Returns number of current elements on Dictionary.
 		size_t size( void );
+
+		size_t capacity( void );
+
+		bool empty( void );
 
 		//! @brief Friend function for debugging. Prints Dictionary.
 		inline friend std::ostream &operator<< ( std::ostream& os_,
@@ -97,30 +106,39 @@ class DAL {
 		}
 };
 
-template< typename Key, typename Data, typename KeyComparator >
+template< typename Key,
+		  typename Data,
+		  typename KeyComparator = std::less<int> >
 class DSAL : public DAL< Key, Data, KeyComparator >	// Heritage.
 // DSAL = Dictionary with Sorted Array List.
 {
 	public:
 		//! @brief Constructor through passed size. Same as DAL.
-		DSAL( int _MaxSz ) : DAL< Key, Data, KeyComparator >( _MaxSz )
+		DSAL( int _MaxSz = DAL< Key, Data, KeyComparator >::DEFAULT_SIZE ) : DAL< Key, Data, KeyComparator >( _MaxSz )
 		{ /* empty */ };
 
 		//! @brief Constructor with default size. Same as DAL.
-		DSAL( void ) : DAL< Key, Data, KeyComparator >( )
-		{ /* empty */ };
+//		DSAL( void ) : DAL< Key, Data, KeyComparator >( )
+//		{ /* empty */ };
 
 		//! @brief Copy Constructor.
 		DSAL( DSAL & rhs );	
 
 		virtual ~DSAL() { /* empty */ };
 
+		size_t capacity ( void )
+		{ return DAL< Key, Data, KeyComparator >::capacity(); };
+
+		bool empty ( void )
+		{ return DAL< Key, Data, KeyComparator >::empty(); };
+
 		// Methods to overwrite.
 		bool remove( const Key & k_, Data & d_ );
+		bool search( const Key & k_, Data & d_ );
 		bool insert( const Key & new_k_, const Data & new_d_ );
 		Key min() const;
 		Key max() const;
-		bool sucessor( const Key & key1_, Key & key2_ ) const;
+		bool successor( const Key & key1_, Key & key2_ ) const;
 		bool predecessor( const Key & key1_, Key & key2_ ) const;
 		bool operator== ( const DSAL & List_ );
 		size_t size ( void );
