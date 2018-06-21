@@ -99,6 +99,8 @@ template< typename Key, typename Data, typename KeyComparator >
 Key DAL< Key, Data, KeyComparator >::min ( void ) const
 /*{{{*/
 {
+	KeyComparator compare;
+
 	if( m_size == 0 ) throw std::out_of_range("Empty Dictionary has no min.");
 	Key min_ = mpt_data[0].id;
 	for( int i=1; i < (int) m_size; i++ ){
@@ -115,6 +117,8 @@ template< typename Key, typename Data, typename KeyComparator >
 Key DAL< Key, Data, KeyComparator >::max ( void ) const
 /*{{{*/
 {
+	KeyComparator compare;
+
 	if( m_size == 0) throw std::out_of_range("Empty Dictionary has no max.");
 	Key max_ = mpt_data[0].id;
 	for( int i=1; i < (int) m_size; i++ ){
@@ -133,6 +137,8 @@ bool DAL< Key, Data, KeyComparator >::successor ( const Key & key1_,
 /*{{{*/
 {
 	Key suc;
+	KeyComparator compare;
+
 	bool is_a_bigger = false;
 	for( int i=0; i < (int) m_size; i++ ){
 		if( true == compare( key1_, mpt_data[i].id ) ){
@@ -162,6 +168,8 @@ bool DAL< Key, Data, KeyComparator >::predecessor ( const Key & key1_,
 /*{{{*/
 {
 	Key pred;
+	KeyComparator compare;
+
 	bool is_a_smaller = false;
 	for( int i=0; i < (int) m_size; i++ ){
 		if( true == compare( mpt_data[i].id, key1_ ) ){
@@ -301,6 +309,7 @@ bool DSAL< Key, Data, KeyComparator >::insert ( const Key & new_k_,
 												const Data & new_d_ )
 /*{{{*/
 {
+	KeyComparator compare;
 	int i = _search( new_k_ );
 
 	// Overwrites information if key already exists. Returns False.
@@ -314,7 +323,7 @@ bool DSAL< Key, Data, KeyComparator >::insert ( const Key & new_k_,
 	i=0;
 
 	// Finding where the new key should be inserted.
-	while( i < this->m_size-1 and true == this->compare( this->mpt_data[i].id, new_k_ ) ){
+	while( i < this->m_size-1 and true == compare( this->mpt_data[i].id, new_k_ ) ){
 		i++;
 	}
 

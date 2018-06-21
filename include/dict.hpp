@@ -29,7 +29,7 @@ class DAL {
 		size_t m_capacity;						//!< Maximun list capacity.
 		NodeAL *mpt_data;						//!< Dynamic storage array.
 
-		KeyComparator compare;					//!< Functor for compare func.
+//		KeyComparator compare;					//!< Functor for compare func.
 
 		int _search( const Key & k_ ) const	//!< Auxiliary search method.
 		{
@@ -87,8 +87,10 @@ class DAL {
 		//! @brief Returns number of current elements on Dictionary.
 		size_t size( void );
 
+		//! @brief Returns total allocated capacity of Dictionary.
 		size_t capacity( void );
 
+		//! @return True if Dictionary has no elements. False otherwise.
 		bool empty( void );
 
 		//! @brief Friend function for debugging. Prints Dictionary.
@@ -117,10 +119,6 @@ class DSAL : public DAL< Key, Data, KeyComparator >	// Heritage.
 		DSAL( int _MaxSz = DAL< Key, Data, KeyComparator >::DEFAULT_SIZE ) : DAL< Key, Data, KeyComparator >( _MaxSz )
 		{ /* empty */ };
 
-		//! @brief Constructor with default size. Same as DAL.
-//		DSAL( void ) : DAL< Key, Data, KeyComparator >( )
-//		{ /* empty */ };
-
 		//! @brief Copy Constructor.
 		DSAL( DSAL & rhs );	
 
@@ -146,15 +144,17 @@ class DSAL : public DAL< Key, Data, KeyComparator >	// Heritage.
 	private:
 		int _search( const Key & k_ ) const	// Auxiliary search method.
 		{
+			KeyComparator compare;
+
 			// Since it is sorted, we can use a binary search.
 			int first = 0;
 			int last = this->m_size - 1;
 			int pos = this->m_size/2;
 			while( first <= last ){
-				if( true == this->compare( this->mpt_data[pos].id, k_ ) ){
+				if( true == compare( this->mpt_data[pos].id, k_ ) ){
 					first = pos+1;
 				}
-				else if( true == this->compare( k_, this->mpt_data[pos].id ) ){
+				else if( true == compare( k_, this->mpt_data[pos].id ) ){
 					last = pos-1;
 				}
 				else {

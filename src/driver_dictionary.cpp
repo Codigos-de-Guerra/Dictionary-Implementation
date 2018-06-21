@@ -28,7 +28,7 @@ int main ( void )
     {
         // Testing default constructor.
         auto cmp = [](const int& l, const int& r) { return l < r; };
-        DAL<int, std::string/*, decltype(cmp)*/ > dic;
+        DAL<int, std::string, decltype(cmp) > dic;
         assert( dic.capacity() == 50 );
 
         DAL<int, std::string, MyKeyComparator> dic2(100);
@@ -39,7 +39,7 @@ int main ( void )
         // Testing insert.
         DAL<int, std::string, MyKeyComparator> dict(3);
         auto cmp = [](const int& l, const int& r) { return l < r; };
-        DAL<int, std::string/*, decltype(cmp)*/ > dict2(3);
+        DAL<int, std::string, decltype(cmp) > dict2(3);
 
         // testing the regular insert
         assert( dict.insert( 1, "AAA" ) );
