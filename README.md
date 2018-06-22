@@ -27,6 +27,9 @@ $ make
 
 # To clean up all remaining trash data and files, such as the binary ones, insert 'make clean':
 $ make clean
+
+# To generate doxygen documentation:
+$ make docs
 ```
 
 ## How to execute
